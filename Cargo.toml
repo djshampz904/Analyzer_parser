@@ -1,0 +1,11 @@
+[package]
+name = "Analyzer_parser"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+polars = "0.26.1"
+rayon = "1.10.0"
+serde = "1.0.219"
+once_cell = "1.21.3"
+polars-lazy = "0.47.1"
