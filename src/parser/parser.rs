@@ -14,6 +14,12 @@ pub fn print_df_info(df: &DataFrame) {
     println!("Columns: {:?}", df.get_column_names());
     println!("Schema: {:?}", df.schema());
 }
+
+pub fn print_df(df: &DataFrame, rows: usize) {
+    println!("DataFrame:");
+    println!("{:?}", df.head(Some(rows))); // Print the first 10 rows
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

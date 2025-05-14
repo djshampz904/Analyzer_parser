@@ -1,17 +1,50 @@
 mod parser;
+use clap::Parser;
+use polars::prelude::ArrowSchema;
+
+#[derive(Parser)]
+#[command(
+    name = "Event Traces Parser",
+    version = "1.0",
+    author = "Martin Gitau",)
+]
+
+struct Cli {
+    #[clap(subcommand)]
+    command: Option<Commands>
+}
+
+#[derive(Parser)]
+enum Commands {
+    Print {
+        #[clap(long, default_value = "preprocessed/Event_traces.csv")]
+        path: String,
+        #[clap(long, default_value = "10")]
+        rows: usize,
+    },
+    Schema {
+        #[clap(long, default_value = "preprocessed/Event_traces.csv")]
+        path: String,
+        #[clap(long, default_value = "10")]
+        rows: usize
+    }
+}
 
 fn main() {
-    let file_path = "preprocessed/Event_traces.csv"; // Replace with your file path
+    let cli = Cli::parse();
 
-    // Process the logs and get the DataFrame
-    let result = parser::parser::process_logs(file_path);
-    match result {
-        Ok(df) => {
-            // Print DataFrame information
+    match cli.command {
+        Some(Commands::Print { path, rows}) => {
+            let df = parser::parser::process_logs(&path).unwrap();
+            parser::parser::print_df(&df, rows);
+        }
+        Some(Commands::Schema {path, rows}) => {
+            let df = parser::parser::process_logs(&path).unwrap();
             parser::parser::print_df_info(&df);
         }
-        Err(e) => {
-            eprintln!("Error processing logs: {:?}", e);
+        _ => {
+            println!("No command provided. Use --help for more information.");
         }
     }
+
 }
