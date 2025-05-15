@@ -1,6 +1,5 @@
 mod parser;
 use clap::Parser;
-use polars::prelude::ArrowSchema;
 
 #[derive(Parser)]
 #[command(
@@ -25,8 +24,6 @@ enum Commands {
     Schema {
         #[clap(long, default_value = "preprocessed/Event_traces.csv")]
         path: String,
-        #[clap(long, default_value = "10")]
-        rows: usize
     },
     MultiFiles {
         #[clap(long, value_delimiter = ',', num_args = 1.., value_name = "FILES")]
@@ -44,7 +41,7 @@ fn main() {
             let df = parser::parser::process_logs(&path).unwrap();
             parser::parser::print_df(&df, rows);
         }
-        Some(Commands::Schema {path, rows}) => {
+        Some(Commands::Schema {path}) => {
             let df = parser::parser::process_logs(&path).unwrap();
             parser::parser::print_df_info(&df);
         }

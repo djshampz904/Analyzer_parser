@@ -16,7 +16,7 @@ pub fn multi_files(file_paths: Vec<&str>) -> Result<Vec<DataFrame>, PolarsError>
     let num_files = file_paths.len();
 
     // Create a thread pool with the number of files
-    let pool = worker_pool::create_thread_pool(num_files);
+    let pool = worker_pool::calculate_optimal_threads(num_files);
 
     // Read the CSV files in parallel
     let dfs: Vec<Result<DataFrame, PolarsError>> = pool.install(|| {

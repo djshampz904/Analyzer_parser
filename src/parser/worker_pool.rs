@@ -1,7 +1,6 @@
-use rayon::prelude::*;
-use rayon::{max_num_threads, ThreadPoolBuilder};
+use rayon::ThreadPoolBuilder;
 
-pub fn calculate_optimal_threads(file_count: usize) -> usize {
+pub fn calculate_optimal_threads(file_count: usize) -> rayon::ThreadPool{
     // Calculate the optimal number of threads based on the number of files
     let max_threads = num_cpus::get();
     println!("Available threads: {}", max_threads);
@@ -11,7 +10,8 @@ pub fn calculate_optimal_threads(file_count: usize) -> usize {
     } else {
         file_count
     };
-    optimal_threads
+
+    create_thread_pool(optimal_threads)
 
 }
 pub fn create_thread_pool(num_threads: usize) -> rayon::ThreadPool {
