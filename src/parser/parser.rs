@@ -1,4 +1,6 @@
 use polars::prelude::*;
+use rayon::prelude::*;
+use crate::parser::worker_pool;
 
 pub fn process_logs(file_path: &str) -> Result<DataFrame, PolarsError> {
     // Read the CSV file into a DataFrame
@@ -8,6 +10,24 @@ pub fn process_logs(file_path: &str) -> Result<DataFrame, PolarsError> {
     Ok(df)
 }
 
+pub fn multi_files(file_paths: Vec<&str>) -> Result<Vec<DataFrame>, PolarsError> {
+    // Get file paths from the command line arguments
+    let file_paths: Vec<String> = file_paths.iter().map(|s| s.to_string()).collect();
+    let num_files = file_paths.len();
+
+    // Create a thread pool with the number of files
+    let pool = worker_pool::create_thread_pool(num_files);
+
+    // Read the CSV files in parallel
+    let dfs: Vec<Result<DataFrame, PolarsError>> = pool.install(|| {
+        file_paths
+            .par_iter()
+            .map(|file| process_logs(file.as_str()))
+            .collect()
+    });
+    Ok(dfs.into_iter().filter_map(Result::ok).collect())
+
+}
 pub fn print_df_info(df: &DataFrame) {
     println!("DataFrame Info:");
     println!("Shape: {:?}", df.shape());
@@ -45,5 +65,18 @@ mod tests {
         // Capture the output of print_df_info
         let output = format!("{:?}", result);
         assert!(!output.is_empty(), "Output should not be empty");
+    }
+
+    #[test]
+    fn test_multi_files() {
+        let file_paths = vec!["preprocessed/Event_traces.csv", "preprocessed/another_file.csv"]; // Replace with your test file paths
+        let result = multi_files(file_paths);
+
+        assert!(result.is_ok(), "Failed to process multiple files: {:?}", result.err());
+
+        let dfs = result.unwrap();
+        assert!(!dfs.is_empty(), "DataFrames should not be empty");
+
+        // Additional assertions can be added here based on expected DataFrame structure
     }
 }

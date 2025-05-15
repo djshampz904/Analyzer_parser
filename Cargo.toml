@@ -11,3 +11,4 @@ once_cell = "1.21.3"
 polars-lazy = "0.47.1"
 nom = "8.0.0"
 clap = { version = "4", features = ["derive"] }
+num_cpus = "1.16.0"
