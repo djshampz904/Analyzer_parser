@@ -1,4 +1,4 @@
-# Log Ana
+# Log Parser & Analyzer
 
  This is the main README file for the "Log Ana" project.
 
