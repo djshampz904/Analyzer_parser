@@ -30,6 +30,10 @@ enum Commands {
         paths: Vec<String>,
         #[clap(long, default_value = "10")]
         rows: usize,
+    },
+    MultiSchema{
+         #[clap(long, value_delimiter = ',', num_args = 1.., value_name = "FILES")]
+         paths: Vec<String>,
     }
 }
 
@@ -51,6 +55,20 @@ fn main() {
                 Ok(dfs) => {
                     for df in dfs {
                         parser::parser::print_df(&df, rows);
+                        println!("----------------------------------------------------------------");
+                    }
+                }
+                Err(e) => {
+                    eprintln!("Error processing files: {}", e);
+                }
+            }
+        }
+        Some(Commands::MultiSchema {paths}) => {
+            let collect_paths = paths.iter().map(|s| s.as_str()).collect();
+            match parser::parser::print_df_info(collect_paths) {
+                Ok(dfs) => {
+                    for df in dfs {
+                        parser::parser::print_df_info(&df);
                         println!("----------------------------------------------------------------");
                     }
                 }
