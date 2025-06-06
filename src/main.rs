@@ -64,8 +64,8 @@ fn main() {
             }
         }
         Some(Commands::MultiSchema {paths}) => {
-            let collect_paths = paths.iter().map(|s| s.as_str()).collect();
-            match parser::parser::print_df_info(collect_paths) {
+            let collect_paths = paths.iter().map(|s| s.as_str()).collect::<Vec<&str>>();
+            match parser::parser::multi_files(collect_paths) {
                 Ok(dfs) => {
                     for df in dfs {
                         parser::parser::print_df_info(&df);
