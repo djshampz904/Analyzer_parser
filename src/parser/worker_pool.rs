@@ -37,8 +37,7 @@ mod tests {
         let file_count = 10;
         let optimal_threads = calculate_optimal_threads(file_count);
 
-        assert!(optimal_threads > 0, "Optimal threads should be greater than 0");
-        assert!(optimal_threads <= num_cpus::get(), "Optimal threads should not exceed available CPU cores");
+        assert!(optimal_threads.current_num_threads() > 0, "Optimal threads should be greater than 0");
+        assert!(optimal_threads.current_num_threads() <= num_cpus::get(), "Optimal threads should not exceed available CPU cores");
     }
-
 }
